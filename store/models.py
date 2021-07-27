@@ -14,10 +14,8 @@ class Products(models.Model):
     images = models.ImageField(upload_to = 'photos/products')
     stock = models.IntegerField()
     is_availabel = models.BooleanField(default=True)
-
     # ForeignKey
     category = models.ForeignKey(Category, on_delete= models.CASCADE)
-
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
 
