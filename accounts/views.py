@@ -1,3 +1,4 @@
+from carts.models import Cart, Cart_Item
 from django import VERSION
 from django.contrib.sites.requests import RequestSite
 from django.http.response import HttpResponse
@@ -6,14 +7,15 @@ from django.shortcuts import redirect, render
 from .forms import RegistrationForm
 from django.contrib import messages, auth
 from django.contrib.auth.decorators import login_required
-
+from store.views import _cart_id
 # Verification
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import EmailMessage, message
+from django.core.mail import EmailMessage
+import requests
 # Create your views here.
 
 def register (request):
@@ -57,9 +59,29 @@ def login (request):
         user = auth.authenticate(email=email, password=password)
 
         if user is not None:
+            try:
+                cart = Cart.objects.get(cart_id=_cart_id(request))
+                is_cart_item_exists = Cart_Item.objects.filter(cart=cart).exists()
+                if is_cart_item_exists:
+                    cart_item = Cart_Item.objects.filter(cart=cart)
+                    for item in cart_item:
+                        item.user = user
+                        item.save()
+            except:
+                pass
             auth.login(request, user)
-            messages.success(request, 'You are now loggged in.')
-            return redirect ('dashboard')
+            messages.success(request, 'You are now logged in.')
+            url = request.META.get('HTTP_REFERER')
+            try:
+                query = requests.utils.urlparse(url).query
+                # next=/cart/checkout/
+                params = dict(x.split('=') for x in query.split('&'))
+                if 'next' in params:
+                    nextPage = params['next']
+                    return redirect(nextPage)
+            except:
+                return redirect('dashboard')
+            
         else:
             messages.error(request, 'invalid login credentials')
             return redirect('login')

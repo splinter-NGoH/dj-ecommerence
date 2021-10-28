@@ -37,10 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'category',
     'accounts',
     'store',
     'carts',
+    'orders',
 ]
 
 MIDDLEWARE = [
@@ -58,7 +60,7 @@ ROOT_URLCONF = 'greatkart.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],
+        'DIRS': ['templates'],  
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -147,5 +149,11 @@ MESSAGE_TAGS = {
 EMAIL_HOST  = 'smtp.gmail.com'
 EMAIL_HOST_USER  = 'ahmedmansy265@gmail.com'
 EMAIL_PORT  = 587
-EMAIL_HOST_PASSWORD  = 'your password'
+EMAIL_HOST_PASSWORD  = 'funrhnnmiblhgoim'
 EMAIL_USE_TLS  = True
+
+
+GRAPH_MODELS = {
+    'all_applications': True,
+    'group_models': True,
+}
